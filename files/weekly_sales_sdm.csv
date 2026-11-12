@@ -1,0 +1,33 @@
+week,sku_code,sku_name,channel,units,avg_price_aed,net_sales_aed,on_promo,promo_depth_pct,competitor_price_aed,in_stock_pct,gross_margin_pct,budget_margin_pct,contribution_aed
+2026-W44,CB30,Chocolate Cake Bar 30g,Talabat Mart,4200,3.5,14700,N,0,3.45,96,34,32,4998
+2026-W44,CB30,Chocolate Cake Bar 30g,Noon Minutes,3100,3.5,10850,N,0,3.45,96,34,32,3689
+2026-W44,CB30,Chocolate Cake Bar 30g,Careem Quik,2600,3.5,9100,N,0,3.45,96,34,32,3094
+2026-W44,CB30,Chocolate Cake Bar 30g,Carrefour UAE,9800,3.5,34300,N,0,3.45,96,34,32,11662
+2026-W44,KB40,Kunafa Bar 40g,Talabat Mart,2800,6.0,16800,N,0,6.25,96,36,32,6048
+2026-W44,KB40,Kunafa Bar 40g,Noon Minutes,2600,6.0,15600,N,0,6.25,96,36,32,5616
+2026-W44,KB40,Kunafa Bar 40g,Careem Quik,1700,6.0,10200,N,0,6.25,96,36,32,3672
+2026-W44,KB40,Kunafa Bar 40g,Carrefour UAE,5200,6.0,31200,N,0,6.25,96,36,32,11232
+2026-W44,SR6,Vanilla Swiss Roll 6pk,Talabat Mart,1900,9.5,18050,N,0,9.75,96,30,28,5415
+2026-W44,SR6,Vanilla Swiss Roll 6pk,Noon Minutes,1500,9.5,14250,N,0,9.75,96,30,28,4275
+2026-W44,SR6,Vanilla Swiss Roll 6pk,Careem Quik,1100,9.5,10450,N,0,9.75,96,30,28,3135
+2026-W44,SR6,Vanilla Swiss Roll 6pk,Carrefour UAE,4300,9.5,40850,N,0,9.75,96,30,28,12255
+2026-W44,DC12,Date Cookies 12pk,Talabat Mart,900,12.0,10800,N,0,12.5,96,38,33,4104
+2026-W44,DC12,Date Cookies 12pk,Noon Minutes,850,12.0,10200,N,0,12.5,96,38,33,3876
+2026-W44,DC12,Date Cookies 12pk,Careem Quik,1300,12.0,15600,N,0,12.5,96,38,33,5928
+2026-W44,DC12,Date Cookies 12pk,Carrefour UAE,2600,12.0,31200,N,0,12.5,96,38,33,11856
+2026-W45,CB30,Chocolate Cake Bar 30g,Talabat Mart,4158,3.5,14553,N,0,3.45,96,34,32,4948
+2026-W45,CB30,Chocolate Cake Bar 30g,Noon Minutes,3162,3.5,11067,N,0,3.45,96,34,32,3763
+2026-W45,CB30,Chocolate Cake Bar 30g,Careem Quik,2574,3.5,9009,N,0,3.45,96,34,32,3063
+2026-W45,CB30,Chocolate Cake Bar 30g,Carrefour UAE,7644,3.5,26754,N,0,2.95,96,34,32,9096
+2026-W45,KB40,Kunafa Bar 40g,Talabat Mart,2772,6.0,16632,N,0,6.25,96,36,32,5988
+2026-W45,KB40,Kunafa Bar 40g,Noon Minutes,4212,4.5,18954,Y,25,6.25,96,18,32,3412
+2026-W45,KB40,Kunafa Bar 40g,Careem Quik,1683,6.0,10098,N,0,6.25,96,36,32,3635
+2026-W45,KB40,Kunafa Bar 40g,Carrefour UAE,5304,6.0,31824,N,0,6.25,96,36,32,11457
+2026-W45,SR6,Vanilla Swiss Roll 6pk,Talabat Mart,1216,9.5,11552,N,0,9.75,58,30,28,3466
+2026-W45,SR6,Vanilla Swiss Roll 6pk,Noon Minutes,1530,9.5,14535,N,0,9.75,96,30,28,4360
+2026-W45,SR6,Vanilla Swiss Roll 6pk,Careem Quik,1089,9.5,10346,N,0,9.75,96,30,28,3104
+2026-W45,SR6,Vanilla Swiss Roll 6pk,Carrefour UAE,4386,9.5,41667,N,0,9.75,96,30,28,12500
+2026-W45,DC12,Date Cookies 12pk,Talabat Mart,891,12.0,10692,N,0,12.5,96,38,33,4063
+2026-W45,DC12,Date Cookies 12pk,Noon Minutes,867,12.0,10404,N,0,12.5,96,38,33,3954
+2026-W45,DC12,Date Cookies 12pk,Careem Quik,1664,12.0,19968,N,0,12.5,96,38,33,7588
+2026-W45,DC12,Date Cookies 12pk,Carrefour UAE,2652,12.0,31824,N,0,12.5,96,38,33,12093

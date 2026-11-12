@@ -1,0 +1,32 @@
+CAKES & COOKIES - CATEGORY CONTEXT (UAE)
+Knowledge base document for the Weekly Commercial Brief co-build. All brand details are illustrative.
+
+1. MARKET
+- UAE cakes market: about USD 108M retail value (2025), growing about 10% a year. One share point is worth about USD 1.08M retail value.
+- The brand is a market leader in UAE cakes, with a strong position in packaged cakes.
+- Main packaged competitors are two global confectionery brands. One of them sells a direct competitor to our Chocolate Cake Bar.
+- Growth is in packaged and online. E-commerce for UAE baked goods is growing more than twice as fast as store sales.
+- Consumer trends: health, premium, authentic and fusion flavours. Kunafa Bar is the brand's fusion-flavour product.
+
+2. CHANNELS IN SCOPE
+- Quick commerce: Talabat Mart, Noon Minutes, Careem Quik. Small baskets, impulse buys, rankings driven by platform algorithms. In-stock rate and paid visibility drive sales strongly.
+- Carrefour UAE: the largest single channel by volume. Shelf price is visible next to competitors, so it is the most price-sensitive channel.
+
+3. SKU NOTES
+- CB30 Chocolate Cake Bar 30g: core volume SKU. Competes head to head with a global brand's cake bar. Price-sensitive.
+- KB40 Kunafa Bar 40g: premium fusion SKU. Should hold its price premium, so deep discounts weaken the positioning.
+- SR6 Vanilla Swiss Roll 6pk: family pack. Prone to supply gaps on quick commerce.
+- DC12 Date Cookies 12pk: premium, high margin, growing with health and authentic-flavour trends.
+
+4. DECISION RULES (GUARDRAILS)
+- G1 Margin floor: no proposed action may push a SKU-channel gross margin below its budget margin. Any action that would do so is BLOCKED and must not be sent for approval.
+- G2 Contribution first: compare options on contribution (net sales x gross margin %), not on sales or units.
+- G3 Promo depth: promotions deeper than 20% need commercial-director approval and must show positive incremental contribution.
+- G4 Stock before spend: never propose paid visibility for a SKU-channel with in-stock below 90%. Fix availability first.
+- G5 Price matching: do not match a competitor price cut on a core SKU without modelling the margin impact first. Consider partial moves, pack or bundle changes, or holding price.
+
+5. APPROVERS
+- Listing and delisting changes: Channel Lead, Quick Commerce or Key Account Manager, Carrefour
+- Price changes up to 5%: Category Manager, Cakes & Cookies
+- Price changes above 5%, or promos deeper than 20%: Commercial Director
+- Supply and availability actions: Supply Planning Lead

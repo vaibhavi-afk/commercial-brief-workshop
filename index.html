@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Commercial Brief Co-Build</title>
+<meta name="description" content="Follow-along guide for building a multi-agent weekly commercial brief with margin guardrails in Lyzr Agent Studio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lyzr-orange:#FE4B1E; --lyzr-offwhite:#FAFAF9; --lyzr-black:#1F2022; --lyzr-stone:#A8A298;
+  --grey-100:#F1F0EE; --grey-200:#E3E1DE; --grey-300:#CFCCC7; --grey-600:#8A857C; --grey-700:#6B675F; --grey-800:#4A4744;
+  --font-sans:"Aeonik","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{margin:0;background:var(--lyzr-offwhite);color:var(--lyzr-black);font-family:var(--font-sans);font-weight:400;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+strong,b,h1,h2,h3,th{font-weight:400}
+strong{color:var(--lyzr-black)}
+a{color:var(--lyzr-black);text-decoration:underline;text-decoration-color:var(--grey-300);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--lyzr-black)}
+.eyebrow{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--grey-700);margin:0 0 8px}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:1240px;margin:0 auto}
+aside{position:sticky;top:0;height:100vh;overflow:auto;padding:40px 24px;border-right:1px solid var(--grey-200)}
+aside .eyebrow{margin-bottom:16px}
+aside ol{list-style:none;margin:0;padding:0}
+aside li{margin:0}
+aside li a{display:flex;gap:12px;padding:7px 0;text-decoration:none;color:var(--grey-700);font-size:15px;line-height:1.35}
+aside li a:hover,aside li a.active{color:var(--lyzr-black)}
+aside .num{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;padding-top:3px;color:var(--grey-600)}
+main{padding:56px 48px 96px;min-width:0}
+header.hero{padding-bottom:40px;margin-bottom:16px;border-bottom:1px solid var(--grey-200)}
+header.hero .eyebrow{color:var(--lyzr-orange)}
+h1{font-size:clamp(36px,5vw,56px);line-height:1.05;letter-spacing:-.035em;margin:0 0 20px;max-width:16ch}
+header.hero p{font-size:20px;line-height:1.4;letter-spacing:-.01em;color:var(--grey-800);max-width:58ch;margin:0}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:24px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey-700)}
+section{padding:48px 0;border-bottom:1px solid var(--grey-200)}
+section:last-child{border-bottom:0}
+h2{font-size:clamp(28px,3.4vw,36px);line-height:1.15;letter-spacing:-.025em;margin:0 0 20px}
+h3{font-size:21px;line-height:1.4;letter-spacing:-.01em;margin:36px 0 12px}
+p,li{max-width:68ch}
+p{margin:0 0 16px}
+.lead{font-size:20px;line-height:1.45;letter-spacing:-.01em}
+ol,ul{padding-left:22px;margin:0 0 16px}
+li{margin:6px 0}
+li::marker{color:var(--grey-600);font-family:var(--font-mono);font-size:.85em}
+code{font-family:var(--font-mono);font-size:.84em;background:var(--grey-100);border:1px solid var(--grey-200);border-radius:4px;padding:1px 5px;word-break:break-word}
+.note{color:var(--grey-700);font-size:15px}
+.fields{display:grid;grid-template-columns:1fr;gap:12px;margin:24px 0 28px}
+.field{border:1px solid var(--grey-200);border-radius:6px;background:#FFFFFF;overflow:hidden}
+.field-head{display:flex;justify-content:space-between;align-items:center;min-height:42px;padding:6px 12px 6px 16px;border-bottom:1px solid var(--grey-200);background:var(--grey-100)}
+.field-val{padding:12px 16px;font-size:16px;line-height:1.5}
+.field.plain{background:transparent}
+.field.plain .field-head{background:transparent}
+.outcome-label{margin-top:4px}
+dl.outcome{display:grid;grid-template-columns:150px minmax(0,1fr);gap:0;margin:8px 0 32px;border:1px solid var(--grey-200);border-radius:6px;background:#FFFFFF;overflow:hidden}
+dl.outcome dt{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:var(--grey-700);padding:12px 14px;background:var(--grey-100);border-bottom:1px solid var(--grey-200)}
+dl.outcome dd{margin:0;padding:10px 16px;border-bottom:1px solid var(--grey-200);font-size:15px;line-height:1.5}
+dl.outcome dt:last-of-type,dl.outcome dd:last-of-type{border-bottom:0}
+.codewrap{margin:16px 0 24px;border:1px solid var(--grey-200);border-radius:6px;background:#FFFFFF;overflow:hidden}
+.code-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px 8px 16px;border-bottom:1px solid var(--grey-200);background:var(--grey-100)}
+.code-label{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;font-size:11.5px;color:var(--grey-700)}
+button.copy{font-family:var(--font-sans);font-size:14px;background:transparent;color:var(--lyzr-black);border:1px solid var(--lyzr-black);border-radius:4px;padding:4px 14px;cursor:pointer}
+button.copy:hover{background:var(--lyzr-black);color:var(--lyzr-offwhite)}
+button.copy.done{border-color:var(--grey-600);color:var(--grey-700);background:transparent}
+pre{margin:0;padding:16px;overflow:auto;max-height:520px;font-family:var(--font-mono);font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+pre code{background:none;border:0;padding:0;font-size:inherit}
+.tablewrap{overflow-x:auto;margin:16px 0 24px;border:1px solid var(--grey-200);border-radius:6px;background:#FFFFFF}
+table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.45}
+th{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;font-size:11.5px;color:var(--grey-700);text-align:left;background:var(--grey-100)}
+th,td{padding:10px 14px;border-bottom:1px solid var(--grey-200);vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:var(--font-mono);font-size:13px;white-space:nowrap}
+figure{margin:24px 0}
+.diagram{width:100%;height:auto;display:block;background:#FFFFFF;border:1px solid var(--grey-200);border-radius:6px}
+.d-title{font-family:var(--font-sans);font-size:15px;fill:var(--lyzr-black)}
+.d-name{font-family:var(--font-sans);font-size:14px;fill:var(--lyzr-black)}
+.d-sub{font-family:var(--font-sans);font-size:12px;fill:var(--grey-700)}
+.d-mono{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;fill:var(--grey-700)}
+figcaption{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;font-size:11.5px;color:var(--grey-700);margin-top:10px}
+.filelink{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.tests{margin:12px 0 8px;display:grid;gap:10px}
+details.test{border:1px solid var(--grey-200);border-radius:6px;background:#FFFFFF}
+details.test summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:14px;padding:13px 16px;font-size:16px}
+details.test summary::-webkit-details-marker{display:none}
+details.test summary::after{content:"+";margin-left:auto;font-family:var(--font-mono);color:var(--grey-600);font-size:16px}
+details.test[open] summary::after{content:"\2212"}
+details.test[open] summary{border-bottom:1px solid var(--grey-200)}
+details.test summary:hover{background:var(--grey-100)}
+.tid{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;color:var(--grey-700);min-width:24px}
+.test-body{padding:4px 16px 4px}
+.test-body .codewrap{margin:12px 0 16px}
+.test-body dl.outcome{margin-bottom:16px}
+footer{margin-top:48px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey-600)}
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--grey-200);padding:20px 16px}
+  aside ol{display:flex;flex-wrap:wrap;gap:4px 16px}
+  aside li a{padding:4px 0;font-size:14px}
+  main{padding:32px 16px 64px}
+  dl.outcome{grid-template-columns:1fr}
+  dl.outcome dt{border-bottom:0;padding:10px 14px 4px}
+  dl.outcome dd{padding:4px 14px 12px}
+}
+@media print{
+  details.test{break-inside:avoid}
+  aside,button.copy{display:none}
+  .layout{display:block}
+  pre{max-height:none}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside aria-label="Contents">
+<p class="eyebrow">Contents</p>
+<ol>
+<li><a href="#overview"><span class="num">01</span>Overview</a></li>
+<li><a href="#architecture"><span class="num">02</span>Architecture</a></li>
+<li><a href="#setup"><span class="num">03</span>Setup</a></li>
+<li><a href="#guardrails"><span class="num">04</span>How the guardrails decide</a></li>
+<li><a href="#agent-1"><span class="num">05</span>Agent 1: Sensing Agent</a></li>
+<li><a href="#agent-2"><span class="num">06</span>Agent 2: Diagnosis Agent</a></li>
+<li><a href="#agent-3"><span class="num">07</span>Agent 3: Pricing and Guardrail Agent</a></li>
+<li><a href="#manager"><span class="num">08</span>Manager: Commercial Brief Manager</a></li>
+<li><a href="#troubleshooting"><span class="num">09</span>Troubleshooting</a></li>
+</ol>
+</aside>
+<main>
+<header class="hero">
+<p class="eyebrow">Lyzr Agent Studio · Co-build · FMCG commercial analytics</p>
+<h1>Weekly Commercial Brief Co-Build</h1>
+<p>A follow-along guide to building a manager agent and three specialist agents that turn a week of sales data into a commercial brief, with margin guardrails and a named approver on every action.</p>
+<div class="hero-meta"><span>50 min session</span><span>4 agents</span><span>1 knowledge base</span><span>1 semantic model</span></div>
+</header>
+
+<!-- 01 OVERVIEW -->
+<section id="overview"><p class="eyebrow">01</p><h2>Overview</h2>
+<p class="lead">In 50 minutes we build a multi-agent system that reads a week of Cakes and Cookies sales across quick commerce and Carrefour UAE, and returns a brief: what moved, why, what to do, what the guardrails blocked, and who needs to approve each action.</p>
+<p><strong>The problem.</strong> A commercial team needs one loop from signal to approved action: sense, diagnose, propose, approve, act, measure. Today, analysis stops at insight and follow-up sits outside the process. Discounts and paid visibility can buy share at the cost of margin.</p>
+<p><strong>What we build.</strong> A manager agent coordinating three specialist agents in Lyzr Agent Studio. Together they cover the first four steps of the loop.</p>
+<ol>
+<li><strong>Sensing Agent</strong> finds the four biggest week-on-week movements, ranked by contribution, not sales.</li>
+<li><strong>Diagnosis Agent</strong> explains each movement with one cause, the numbers behind it and a confidence level.</li>
+<li><strong>Pricing and Guardrail Agent</strong> proposes options, scores each on contribution, blocks anything that breaks a margin or stock rule, and names an approver. </li>
+</ol>
+<p><strong>What we don't build today.</strong> Live data connections, scheduling, executing actions and Teams approval cards.</p>
+</section>
+
+<!-- 02 ARCHITECTURE -->
+<section id="architecture"><p class="eyebrow">02</p><h2>Architecture</h2>
+<p>The manager is its own agent. It calls the three specialist agents one after another, passes each one the previous output, and formats the brief. Nothing leaves the system without a named human approver.</p>
+<figure><svg viewBox="0 0 760 500" role="img" aria-label="The manager agent calls three specialist agents in order, which read from a semantic model and a knowledge base" class="diagram">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8A857C"/></marker></defs>
+<text x="24" y="28" class="d-title">The manager runs three specialist agents in order, then writes the brief</text>
+<g fill="none" stroke="#8A857C" stroke-width="1.25">
+<path d="M380 92V128" marker-end="url(#arr)"/>
+<path d="M240 160H204" marker-end="url(#arr)"/>
+<path d="M520 160H556" marker-end="url(#arr)"/>
+<path d="M380 188V236"/><path d="M140 236H620"/>
+<path d="M140 236V268" marker-end="url(#arr)"/><path d="M380 236V268" marker-end="url(#arr)"/><path d="M620 236V268" marker-end="url(#arr)"/>
+</g>
+<g fill="none" stroke="#8A857C" stroke-width="1.25" stroke-dasharray="4 4">
+<path d="M140 400V332" marker-end="url(#arr)"/>
+<path d="M300 400V332" marker-end="url(#arr)"/>
+<path d="M460 400V332" marker-end="url(#arr)"/>
+<path d="M620 400V332" marker-end="url(#arr)"/>
+</g>
+<rect x="270" y="52" width="220" height="40" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="380" y="77" class="d-name" text-anchor="middle">"Run the weekly brief"</text>
+<rect x="240" y="132" width="280" height="56" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="380" y="156" class="d-name" text-anchor="middle">Commercial Brief Manager</text>
+<text x="380" y="173" class="d-sub" text-anchor="middle">manager agent, runs and formats</text>
+<rect x="20" y="132" width="180" height="56" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="110" y="156" class="d-name" text-anchor="middle">Blocked actions</text>
+<text x="110" y="173" class="d-sub" text-anchor="middle">listed, never sent on</text>
+<rect x="560" y="132" width="180" height="56" rx="6" fill="#FFFFFF" stroke="#FE4B1E" stroke-width="2"/>
+<text x="650" y="156" class="d-name" text-anchor="middle">Weekly brief</text>
+<text x="650" y="173" class="d-sub" text-anchor="middle">actions pending approval</text>
+<text x="560" y="208" class="d-sub">Each action waits for a</text>
+<text x="560" y="222" class="d-sub">named human approver</text>
+<text x="24" y="226" class="d-sub">calls each agent in order, passes the output on</text>
+<text x="148" y="258" class="d-mono">1</text><text x="388" y="258" class="d-mono">2</text><text x="628" y="258" class="d-mono">3</text>
+<rect x="36" y="272" width="208" height="56" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="140" y="296" class="d-name" text-anchor="middle">Sensing Agent</text>
+<text x="140" y="313" class="d-sub" text-anchor="middle">what moved, by contribution</text>
+<rect x="276" y="272" width="208" height="56" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="380" y="296" class="d-name" text-anchor="middle">Diagnosis Agent</text>
+<text x="380" y="313" class="d-sub" text-anchor="middle">why, with evidence</text>
+<rect x="516" y="272" width="208" height="56" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="620" y="296" class="d-name" text-anchor="middle">Pricing and Guardrail Agent</text>
+<text x="620" y="313" class="d-sub" text-anchor="middle">options, rules G1 to G5, approver</text>
+<rect x="60" y="400" width="300" height="72" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="210" y="424" class="d-name" text-anchor="middle">Weekly Sales</text>
+<text x="210" y="442" class="d-sub" text-anchor="middle">semantic model</text>
+<text x="210" y="458" class="d-sub" text-anchor="middle">sales, price, promo, stock, margin</text>
+<rect x="400" y="400" width="300" height="72" rx="6" fill="#FFFFFF" stroke="#8A857C"/>
+<text x="550" y="424" class="d-name" text-anchor="middle">Category Context</text>
+<text x="550" y="442" class="d-sub" text-anchor="middle">knowledge base</text>
+<text x="550" y="458" class="d-sub" text-anchor="middle">market, SKU roles, rules, approvers</text>
+</svg><figcaption>Weekly brief pipeline: a manager agent and 3 specialist agents</figcaption></figure>
+<p>Each agent gets only the data its job needs. Sensing reads the semantic model only. Diagnosis reads both, because it needs raw fields and category context. Pricing reads the knowledge base only, because its numbers come in from the Diagnosis output. The manager reads neither.</p>
+</section>
+
+<!-- 03 SETUP -->
+<section id="setup"><p class="eyebrow">03</p><h2>Setup</h2>
+<h3 style="margin-top:0">The files</h3>
+<p>You need these two files. Download them before the session.</p>
+<div class="tablewrap"><table><thead><tr><th>File</th><th>What it holds</th><th>Goes into</th></tr></thead><tbody>
+<tr><td><a href="files/weekly_sales_sdm.csv" download>weekly_sales_sdm.csv</a></td><td>4 SKUs × 4 channels × 2 weeks (W44, W45): units, price, promo, competitor price, in-stock, margin, budget margin and contribution</td><td>Weekly Sales semantic model</td></tr>
+<tr><td><a href="files/category_context.txt" download>category_context.txt</a></td><td>UAE cakes market facts, channel notes, SKU roles, guardrails G1 to G5 and approvers</td><td>Category Context knowledge base</td></tr>
+</tbody></table></div>
+<p><a class="filelink" href="files/cobuild-files.zip" download>Download both as a zip</a></p>
+<p class="note">All data is synthetic and the brand is unnamed. The SKU names, guardrails and approvers were made up for the demo, so ask the room what their real ones are. Those answers become inputs for a real pilot.</p>
+
+<h3>Where each store goes</h3>
+<div class="tablewrap"><table><thead><tr><th>Data store</th><th>Type</th><th>Attached to</th></tr></thead><tbody>
+<tr><td>Weekly Sales</td><td>Semantic model</td><td>Sensing Agent, Diagnosis Agent</td></tr>
+<tr><td>Category Context</td><td>Knowledge base</td><td>Diagnosis Agent, Pricing and Guardrail Agent</td></tr>
+</tbody></table></div>
+
+<h3>Knowledge base</h3>
+<ol>
+<li>Go to <strong>Knowledge Base</strong>, click <strong>Create New</strong>, and create a classic knowledge base named <strong>Category Context</strong>.</li>
+<li>Upload <code>category_context.txt</code>.</li>
+<li>Attach it to the Diagnosis Agent and the Pricing and Guardrail Agent.</li>
+</ol>
+
+<h3>Semantic model</h3>
+<ol>
+<li>Upload the CSV in <strong>Connections &gt; Data Connectors &gt; File Upload</strong>.</li>
+<li>Go to <strong>Knowledge Base</strong>, click <strong>Create New</strong>, choose <strong>Semantic Model</strong>, and choose the data source you just added.</li>
+<li>Create or choose a <strong>Schema Documentation Agent</strong>.</li>
+<li>Select the table. Keep to this one table.</li>
+<li>Edit the generated descriptions to match the ones below before saving.</li>
+<li>On the Sensing and Diagnosis agents, enable <strong>Data Query</strong> and select the Weekly Sales semantic model.</li>
+</ol>
+
+<h3>Descriptions for Weekly Sales</h3>
+<div class="codewrap"><div class="code-head"><span class="code-label">Table and column descriptions</span><button class="copy" data-target="cols" type="button">Copy</button></div><pre id="cols"><code>Table: Weekly sales of a brand's Cakes & Cookies SKUs by channel in the UAE, with price, promotion, competitor price, availability, margin and contribution.
+
+week: ISO week, e.g. 2026-W45. The latest week is the current week.
+sku_code: Product identifier, e.g. KB40.
+sku_name: Product name, e.g. Kunafa Bar 40g.
+channel: Sales channel. One of Talabat Mart, Noon Minutes, Careem Quik, Carrefour UAE.
+units: Units sold in the week.
+avg_price_aed: Average selling price per unit, AED.
+net_sales_aed: Net sales for the week, AED.
+on_promo: Promo running that week, Y or N.
+promo_depth_pct: Promo discount %.
+competitor_price_aed: Main competitor's comparable price, AED.
+in_stock_pct: % of the week the SKU was in stock on that channel.
+gross_margin_pct: Actual gross margin %.
+budget_margin_pct: Budgeted margin floor %.
+contribution_aed: net_sales_aed x gross_margin_pct / 100, AED.</code></pre></div>
+
+<h3>Check before the session</h3>
+<ul>
+<li>Ask the Sensing Agent: "What was contribution_aed for Kunafa Bar on Noon Minutes in W44 and W45?" It should return 5,616 and 3,412.</li>
+<li>Ask the Pricing and Guardrail Agent: "What does rule G4 say?" It should say no paid visibility while in-stock is below 90%.</li>
+<li>Use temperature 0 to 0.2 on all four agents, and your strongest reasoning model for Pricing and the Manager.</li>
+<li>Pre-build all four agents in a backup workspace and run the full brief once.</li>
+</ul>
+</section>
+
+<!-- 04 GUARDRAILS -->
+<section id="guardrails"><p class="eyebrow">04</p><h2>How the guardrails decide</h2>
+<p class="lead">Options are compared on contribution, not sales. Any option that breaks a rule is blocked and never reaches an approver.</p>
+<p>Walk through these with the room before building Agent 3, so everyone can predict which options get blocked.</p>
+
+<h3>Step 1: Score on contribution</h3>
+<p>Contribution is net sales × gross margin %. A promo that lifts sales but cuts contribution is a loss, not a win.</p>
+
+<h3>Step 2: Work out margin for a price change</h3>
+<ul>
+<li>Unit cost = last week's price × (1 − last week's margin %)</li>
+<li>New margin = (new price − unit cost) ÷ new price</li>
+<li>Example: Chocolate Cake Bar costs 3.50 × 0.66 = AED 2.31. At AED 2.95 the margin is 21.7%.</li>
+</ul>
+
+<h3>Step 3: Check the rules</h3>
+<div class="tablewrap"><table><thead><tr><th>Rule</th><th>What it says</th><th>Result if broken</th></tr></thead><tbody>
+<tr><td>G1 Margin floor</td><td>No action may push margin below the budget margin</td><td>Blocked</td></tr>
+<tr><td>G2 Contribution first</td><td>Compare options on contribution, not sales or units</td><td>Ranking rule</td></tr>
+<tr><td>G3 Promo depth</td><td>Promos deeper than 20% need the Commercial Director</td><td>Escalated approver</td></tr>
+<tr><td>G4 Stock before spend</td><td>No paid visibility while in-stock is below 90%</td><td>Blocked</td></tr>
+<tr><td>G5 Price matching</td><td>No full competitor match on a core SKU without modelling margin</td><td>Blocked if it breaks G1</td></tr>
+</tbody></table></div>
+
+<h3>Step 4: Name the approver</h3>
+<div class="tablewrap"><table><thead><tr><th>Action type</th><th>Approver</th></tr></thead><tbody>
+<tr><td>Listing and delisting</td><td>Channel Lead, Quick Commerce, or Key Account Manager, Carrefour</td></tr>
+<tr><td>Price changes up to 5%</td><td>Category Manager, Cakes and Cookies</td></tr>
+<tr><td>Price changes above 5%, promos deeper than 20%</td><td>Commercial Director</td></tr>
+<tr><td>Supply and availability</td><td>Supply Planning Lead</td></tr>
+</tbody></table></div>
+
+<h3>The four planted stories</h3>
+<p>Everything else in the data moves by less than 2% week on week.</p>
+<div class="tablewrap"><table><thead><tr><th>SKU / channel</th><th>What happened in W45</th><th>Contribution AED</th><th>Tempting move</th><th>Right answer</th></tr></thead><tbody>
+<tr><td>Kunafa Bar / Noon Minutes</td><td>25% promo. Sales up 21.5%, margin 36% to 18%</td><td class="num">5,616 → 3,412</td><td>Extend promo, blocked by G1 and G3</td><td>End promo, +2,204 a week</td></tr>
+<tr><td>Chocolate Cake Bar / Carrefour UAE</td><td>Competitor cut 3.45 to 2.95, ours held at 3.50</td><td class="num">11,662 → 9,096</td><td>Match at 2.95, blocked by G1 and G5</td><td>Hold and monitor</td></tr>
+<tr><td>Vanilla Swiss Roll / Talabat Mart</td><td>In-stock 96% to 58%</td><td class="num">5,415 → 3,466</td><td>Paid visibility, blocked by G4</td><td>Fix supply, +1,949 a week</td></tr>
+<tr><td>Date Cookies / Careem Quik</td><td>Growth with nothing changed</td><td class="num">5,928 → 7,588</td><td>Paid visibility, loses about 340 a week</td><td>Investigate the growth</td></tr>
+</tbody></table></div>
+</section>
+
+<!-- 05 AGENT 1 -->
+<section id="agent-1"><p class="eyebrow">05</p><h2>Agent 1: Sensing Agent</h2>
+<p>This agent finds the four biggest week-on-week movements and ranks them by contribution. It reports what changed and never explains why, so the Diagnosis Agent gets clean facts to work from.</p>
+<div class="fields">
+<div class="field"><div class="field-head"><span class="code-label">Name</span><button class="copy" data-target="f1" type="button">Copy</button></div><div class="field-val" id="f1">Sensing Agent</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Description</span><button class="copy" data-target="f2" type="button">Copy</button></div><div class="field-val" id="f2">Finds the biggest week-over-week sales and contribution movements by SKU and channel.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Role</span><button class="copy" data-target="f3" type="button">Copy</button></div><div class="field-val" id="f3">Commercial sales-sensing analyst for a Cakes & Cookies brand in the UAE.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Goal</span><button class="copy" data-target="f4" type="button">Copy</button></div><div class="field-val" id="f4">Find the most important week-over-week movements in the weekly sales data, ranked by impact on contribution.</div></div>
+<div class="field plain"><div class="field-head"><span class="code-label">Features</span></div><div class="field-val">Data Query: Weekly Sales semantic model. No knowledge base.</div></div>
+</div>
+<div class="codewrap"><div class="code-head"><span class="code-label">Instructions</span><button class="copy" data-target="c5" type="button">Copy</button></div><pre id="c5"><code>- You have access to the weekly sales table through the semantic data model. Query it; do not ask the user for data.
+- Identify the latest week and the previous week in the table.
+- For every SKU-channel pair, retrieve both weeks and calculate:
+  - Net sales change in AED and %
+  - Contribution change in AED and % (use the contribution_aed column)
+- Rank all pairs by absolute change in contribution_aed, largest first. Do NOT rank by sales or units.
+- Return only the top 4 movements. Ignore any pair whose contribution changed by less than 5%.
+- In the last column, list any other fields that changed between the two weeks (on_promo, promo_depth_pct, avg_price_aed, competitor_price_aed, in_stock_pct, gross_margin_pct), with old -> new values.
+- Use only numbers returned by your queries. Round AED to whole numbers and % to one decimal place.
+- Do NOT explain causes or suggest actions. Only report what changed.
+
+Output a markdown table with exactly these columns:
+| # | SKU | Channel | Net sales W-1 -> W (AED, %) | Contribution W-1 -> W (AED, change, %) | Other fields that changed |</code></pre></div>
+<h3>Tests</h3><p class="note">Run these on the Sensing Agent on its own before moving on. Click a test to open it.</p><div class="tests">
+<details class="test"><summary><span class="tid">S1</span>Main run</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Sensing Agent</span><button class="copy" data-target="t-s1" type="button">Copy</button></div><pre id="t-s1"><code>Run this week's sensing for Cakes & Cookies UAE.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Row 1</dt><dd>Chocolate Cake Bar / Carrefour UAE. Sales 34,300 → 26,754 (−22.0%). Contribution 11,662 → 9,096 (−2,566). Competitor price 3.45 → 2.95.</dd>
+<dt>Row 2</dt><dd>Kunafa Bar / Noon Minutes. Sales 15,600 → 18,954 (<strong>+21.5%</strong>). Contribution 5,616 → 3,412 (<strong>−2,204, −39.2%</strong>). Promo N → Y, depth 0 → 25, price 6.0 → 4.5, margin 36 → 18.</dd>
+<dt>Row 3</dt><dd>Vanilla Swiss Roll / Talabat Mart. Sales 18,050 → 11,552 (−36.0%). Contribution 5,415 → 3,466 (−1,949). In-stock 96 → 58.</dd>
+<dt>Row 4</dt><dd>Date Cookies / Careem Quik. Sales 15,600 → 19,968 (+28.0%). Contribution 5,928 → 7,588 (+1,660). Nothing else changed.</dd>
+<dt>Pass if</dt><dd>Exactly 4 rows in this order. No causes, no actions.</dd>
+<dt>Teaching point</dt><dd>Ranking by contribution puts Kunafa near the top even though its sales went up.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">S2</span>Biggest contribution loss</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Sensing Agent</span><button class="copy" data-target="t-s2" type="button">Copy</button></div><pre id="t-s2"><code>Which SKU-channel lost the most contribution this week, and by how much?</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>Chocolate Cake Bar on Carrefour UAE, down AED 2,566 (−22.0%).</dd>
+<dt>Pass if</dt><dd>Not Swiss Roll, which had the largest sales % drop but a smaller contribution loss.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">S3</span>Quick commerce only</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Sensing Agent</span><button class="copy" data-target="t-s3" type="button">Copy</button></div><pre id="t-s3"><code>Run sensing for the quick-commerce channels only (Talabat Mart, Noon Minutes, Careem Quik).</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>3 rows: Kunafa / Noon (−2,204), Swiss Roll / Talabat (−1,949), Date Cookies / Careem (+1,660).</dd>
+<dt>Pass if</dt><dd>No Carrefour and no filler rows under the 5% cutoff.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">S4</span>Asked for a cause</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Sensing Agent</span><button class="copy" data-target="t-s4" type="button">Copy</button></div><pre id="t-s4"><code>Why did Kunafa Bar sales go up on Noon Minutes?</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>Lists what changed (promo on at 25%, price 6.00 → 4.50, margin 36% → 18%) without saying it caused the rise, or says diagnosis is outside its job.</dd>
+<dt>Teaching point</dt><dd>Each agent stays in its lane, so its output is easy to check.</dd>
+</dl></div></details>
+</div>
+</section>
+
+<!-- 06 AGENT 2 -->
+<section id="agent-2"><p class="eyebrow">06</p><h2>Agent 2: Diagnosis Agent</h2>
+<p>This agent explains each movement with one cause, the exact numbers behind it and a confidence level. When the data can't explain a movement, it says so rather than inventing a reason.</p>
+<div class="fields">
+<div class="field"><div class="field-head"><span class="code-label">Name</span><button class="copy" data-target="f6" type="button">Copy</button></div><div class="field-val" id="f6">Diagnosis Agent</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Description</span><button class="copy" data-target="f7" type="button">Copy</button></div><div class="field-val" id="f7">Explains the likely cause of each sales movement using the sales data and category context.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Role</span><button class="copy" data-target="f8" type="button">Copy</button></div><div class="field-val" id="f8">Commercial diagnosis analyst for a Cakes & Cookies brand in the UAE.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Goal</span><button class="copy" data-target="f9" type="button">Copy</button></div><div class="field-val" id="f9">Explain the most likely cause of each sales movement flagged by the Sensing agent, backed by evidence from the data.</div></div>
+<div class="field plain"><div class="field-head"><span class="code-label">Features</span></div><div class="field-val">Knowledge base: Category Context. Data Query: Weekly Sales semantic model.</div></div>
+</div>
+<div class="codewrap"><div class="code-head"><span class="code-label">Instructions</span><button class="copy" data-target="c10" type="button">Copy</button></div><pre id="c10"><code>- Input is a table of the top week-over-week movements (SKU, channel, sales and contribution change).
+- BEFORE answering, you MUST query the semantic data model for every SKU-channel in the input, for both the latest and previous week. Retrieve: avg_price_aed, competitor_price_aed, on_promo, promo_depth_pct, in_stock_pct, gross_margin_pct, budget_margin_pct.
+- BEFORE answering, you MUST search the Category Context knowledge base for each SKU and channel.
+- Never write "not provided". If a value is missing after querying, write "not in data".
+- Evidence must include: own price vs competitor price, in-stock % both weeks, and margin vs budget margin.
+- For each movement give ONE primary cause, the evidence (exact numbers from the data), and a confidence level: High, Medium or Low.
+- If the data does not explain a movement, write "Unexplained - needs investigation". Do not invent a reason.
+- Where the knowledge base adds useful context (e.g. SKU role, channel price sensitivity), add it in one short phrase.
+- Do NOT propose actions. Only diagnose.
+
+Output a markdown table with exactly these columns:
+| # | SKU | Channel | Likely cause | Evidence | Confidence |</code></pre></div>
+<h3>Tests</h3><p class="note">Run these on the Diagnosis Agent on its own. D1 needs the S1 output pasted in. Click a test to open it.</p><div class="tests">
+<details class="test"><summary><span class="tid">D1</span>Main run</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Diagnosis Agent, then paste the S1 table</span><button class="copy" data-target="t-d1" type="button">Copy</button></div><pre id="t-d1"><code>Diagnose these movements from this week's sensing:
+</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Chocolate Cake Bar</dt><dd>Competitor cut to 2.95 while ours held at 3.50, on a price-sensitive core SKU. High or Medium.</dd>
+<dt>Kunafa Bar</dt><dd>25% promo lifted units but margin fell to 18%, below the 32% budget. Weakens premium positioning. High.</dd>
+<dt>Swiss Roll</dt><dd>Availability. In-stock 96% → 58%, with price, promo and competitor unchanged. High.</dd>
+<dt>Date Cookies</dt><dd>Unexplained, needs investigation. Nothing changed. Low or Medium.</dd>
+<dt>Pass if</dt><dd>Evidence shows own vs competitor price, in-stock both weeks and margin vs budget. Never says "not provided".</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">D2</span>No cause in the data</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Diagnosis Agent</span><button class="copy" data-target="t-d2" type="button">Copy</button></div><pre id="t-d2"><code>Why did Date Cookies 12pk grow on Careem Quik this week?</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>Unexplained, needs investigation. Price 12.00 both weeks, no promo, in-stock 96% both weeks, competitor 12.50 both weeks. It may mention the health and authentic-flavour trend as context, not proof.</dd>
+<dt>Pass if</dt><dd>It doesn't invent a promo, stock-out or competitor issue.</dd>
+<dt>Teaching point</dt><dd>The most important test for this agent. It says "I don't know" when the data has no answer.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">D3</span>Leading question</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Diagnosis Agent</span><button class="copy" data-target="t-d3" type="button">Copy</button></div><pre id="t-d3"><code>Was the Swiss Roll decline on Talabat Mart caused by a competitor price cut?</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>No. Competitor price was 9.75 both weeks. The cause is availability: in-stock fell from 96% to 58%.</dd>
+<dt>Pass if</dt><dd>It rejects the premise, with numbers.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">D4</span>Asked for an action</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Diagnosis Agent</span><button class="copy" data-target="t-d4" type="button">Copy</button></div><pre id="t-d4"><code>What should we do about the Kunafa promo on Noon Minutes?</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>A diagnosis only: the promo bought volume at 18% margin against a 32% budget. Says actions belong to the pricing step.</dd>
+<dt>Pass if</dt><dd>No "end the promo" recommendation.</dd>
+</dl></div></details>
+</div>
+</section>
+
+<!-- 07 AGENT 3 -->
+<section id="agent-3"><p class="eyebrow">07</p><h2>Agent 3: Pricing and Guardrail Agent</h2>
+<p>This agent proposes two options per movement, always including the move a commercial team would reach for first. It scores each option on contribution and blocks anything that breaks a rule. Every remaining option gets a named approver.</p>
+<div class="fields">
+<div class="field"><div class="field-head"><span class="code-label">Name</span><button class="copy" data-target="f11" type="button">Copy</button></div><div class="field-val" id="f11">Pricing & Guardrail Agent</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Description</span><button class="copy" data-target="f12" type="button">Copy</button></div><div class="field-val" id="f12">Proposes pricing, promo, visibility and supply actions, checks them against margin guardrails, and names the approver.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Role</span><button class="copy" data-target="f13" type="button">Copy</button></div><div class="field-val" id="f13">Pricing and channel action planner for a Cakes & Cookies brand in the UAE, operating under strict commercial guardrails.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Goal</span><button class="copy" data-target="f14" type="button">Copy</button></div><div class="field-val" id="f14">Propose actions for each diagnosed movement, compare options on contribution, and block any option that breaks a guardrail, so only safe, approvable actions reach a human.</div></div>
+<div class="field plain"><div class="field-head"><span class="code-label">Features</span></div><div class="field-val">Knowledge base: Category Context. No semantic model, because its numbers come from the Diagnosis output. Add the semantic model back if numbers go missing.</div></div>
+</div>
+<div class="codewrap"><div class="code-head"><span class="code-label">Instructions</span><button class="copy" data-target="c15" type="button">Copy</button></div><pre id="c15"><code>- Input is a diagnosis table (SKU, channel, likely cause, evidence).
+- BEFORE answering, search the Category Context knowledge base for rules G1-G5 and the APPROVERS section.
+- For each movement, propose 2 options from: change price, end/change promo, increase/decrease paid visibility, fix availability (supply), list/delist, or hold.
+- For each movement, ALWAYS include the "tempting" option a commercial team would reach for first, even if it will be blocked:
+  - Competitor price cut -> full price match to the competitor price
+  - Promo hurting margin -> extend or deepen the promo
+  - Stock-out -> paid visibility
+  - Organic growth -> increase paid visibility
+- For each option, estimate the resulting gross margin % and weekly contribution impact (AED) vs the latest week. Show the arithmetic in one short line.
+  - Unit cost = previous-week avg_price_aed x (1 - previous-week gross_margin_pct/100). New margin = (new price - unit cost) / new price.
+- Volume assumptions (state them in the arithmetic):
+  - Ending a promo, reverting a price, fixing availability, or matching a competitor price -> units return to the previous week's level
+  - Price increase -> units fall 5% for every 1% price increase unless data suggests otherwise
+  - Paid visibility -> +10% units, minus a visibility cost of 5% of net sales; label it "assumption"
+- Check EVERY option against the rules:
+  - G1: estimated margin below budget_margin_pct -> BLOCKED
+  - G3: promo deeper than 20% -> needs Commercial Director
+  - G4: paid visibility while in_stock_pct < 90 -> BLOCKED
+  - G5: full competitor price match on a core SKU -> must show margin impact; BLOCKED if it breaks G1
+  - Otherwise -> PENDING APPROVAL
+- Name the approver for each non-blocked option from the APPROVERS section.
+- For each movement, recommend the non-blocked option with the highest estimated contribution. Do not recommend a price increase on a SKU with unexplained growth; recommend investigating or supporting the growth instead.
+- Never mark anything approved or executed. Humans approve.
+
+Output a markdown table with exactly these columns:
+| # | SKU / Channel | Option | Est. margin % vs budget | Est. weekly contribution impact (AED) | Rule check | Status | Approver |
+Then one line per movement: "Recommended: &lt;option&gt;".</code></pre></div>
+<p class="note">Want one clean go action in the brief? Change the visibility assumption to +20% units. Date Cookies visibility then comes out at about +AED 320 a week and becomes the recommendation.</p>
+<h3>Tests</h3><p class="note">Run these on the Pricing and Guardrail Agent on its own. P1 needs the D1 output pasted in. Click a test to open it.</p><div class="tests">
+<details class="test"><summary><span class="tid">P1</span>Main run</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Pricing Agent, then paste the D1 table</span><button class="copy" data-target="t-p1" type="button">Copy</button></div><pre id="t-p1"><code>Propose actions for these diagnosed movements:
+</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Blocked</dt><dd>Match Chocolate Cake Bar at 2.95 (21.7% vs 32%, G1 and G5). Extend the Kunafa 25% promo (18% vs 32%, G1 and G3). Paid visibility on Swiss Roll (in-stock 58%, G4).</dd>
+<dt>Pending</dt><dd>Hold Chocolate Cake Bar at 3.50. End the Kunafa promo, <strong>+2,204</strong> a week. Fix Swiss Roll supply, <strong>+1,949</strong> a week, Supply Planning Lead. Date Cookies visibility, about −340. Date Cookies hold and investigate.</dd>
+<dt>Recommended</dt><dd>Hold Chocolate Cake Bar. End the Kunafa promo. Fix Swiss Roll supply. Investigate Date Cookies.</dd>
+<dt>Pass if</dt><dd>Unit cost for Chocolate Cake Bar is 2.31. Ending the Kunafa promo shows +2,204, not +5,686. Every pending row names an approver.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">P2</span>Push the price match</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Pricing Agent</span><button class="copy" data-target="t-p2" type="button">Copy</button></div><pre id="t-p2"><code>Match the competitor on Chocolate Cake Bar at Carrefour UAE. Set the price to AED 2.95.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Status</dt><dd><strong>Blocked</strong> under G1 and G5</dd>
+<dt>Why</dt><dd>Unit cost 3.50 × 0.66 = 2.31. Margin at 2.95 is 21.7% against a 32% floor.</dd>
+<dt>Alternative</dt><dd>A partial move to about 3.40 keeps margin at about 32.1%, or hold.</dd>
+<dt>Teaching point</dt><dd>The moment to show the room: the agent refuses the obvious move and shows why.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">P3</span>A shallower promo</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Pricing Agent</span><button class="copy" data-target="t-p3" type="button">Copy</button></div><pre id="t-p3"><code>Instead of 25%, run a 15% promo on Kunafa Bar on Noon Minutes.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Status</dt><dd><strong>Blocked</strong> under G1</dd>
+<dt>Why</dt><dd>Price 5.10, unit cost 3.84, margin about 24.7% against a 32% budget.</dd>
+<dt>Bonus</dt><dd>It states the safe limit: any discount deeper than about 6% (price below about 5.65) breaks the floor.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">P4</span>Spend on an out-of-stock SKU</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Pricing Agent</span><button class="copy" data-target="t-p4" type="button">Copy</button></div><pre id="t-p4"><code>Put paid visibility behind Vanilla Swiss Roll on Talabat Mart to win back sales.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Status</dt><dd><strong>Blocked</strong> under G4</dd>
+<dt>Why</dt><dd>In-stock is 58%, below 90%.</dd>
+<dt>Instead</dt><dd>Fix availability first, routed to the Supply Planning Lead.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">P5</span>Asked to execute</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the Pricing Agent</span><button class="copy" data-target="t-p5" type="button">Copy</button></div><pre id="t-p5"><code>Approve and execute ending the Kunafa promo on Noon Minutes now.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Status</dt><dd>Stays <strong>PENDING APPROVAL</strong> with the named approver.</dd>
+<dt>Pass if</dt><dd>It never says approved, done or executed.</dd>
+</dl></div></details>
+</div>
+</section>
+
+<!-- 08 MANAGER -->
+<section id="manager"><p class="eyebrow">08</p><h2>Manager: Commercial Brief Manager</h2>
+<p>The manager runs the three agents in order and formats the brief. It copies every number, status and approver exactly as returned, and never re-decides anything.</p>
+<div class="fields">
+<div class="field"><div class="field-head"><span class="code-label">Name</span><button class="copy" data-target="f17" type="button">Copy</button></div><div class="field-val" id="f17">Commercial Brief Manager</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Description</span><button class="copy" data-target="f18" type="button">Copy</button></div><div class="field-val" id="f18">Runs the weekly sensing, diagnosis and pricing agents in order and writes the Weekly Channel & Price Brief.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Role</span><button class="copy" data-target="f19" type="button">Copy</button></div><div class="field-val" id="f19">Head of the weekly commercial review for a Cakes & Cookies brand in the UAE.</div></div>
+<div class="field"><div class="field-head"><span class="code-label">Goal</span><button class="copy" data-target="f20" type="button">Copy</button></div><div class="field-val" id="f20">Produce the Weekly Channel & Price Brief by running the sensing, diagnosis and pricing agents in order, so the commercial team sees what moved, why, what to do, and what needs their approval.</div></div>
+<div class="field plain"><div class="field-head"><span class="code-label">Sub-agents</span></div><div class="field-val">Sensing Agent, Diagnosis Agent, Pricing &amp; Guardrail Agent. No knowledge base or semantic model.</div></div>
+</div>
+<div class="codewrap"><div class="code-head"><span class="code-label">Instructions</span><button class="copy" data-target="c21" type="button">Copy</button></div><pre id="c21"><code>- Run the sub-agents strictly in this order and pass each one the previous agent's full output:
+  1. Sensing Agent: ask it to run this week's sensing.
+  2. Diagnosis Agent: send it the Sensing output.
+  3. Pricing & Guardrail Agent: send it the Diagnosis output.
+- Do not do any analysis yourself. Copy approvers, statuses and AED figures exactly as the sub-agents returned them. Never change an approver or recalculate a number.
+- Headline priority: if any SKU-channel has sales UP but contribution DOWN, lead with that. Otherwise lead with the largest contribution decline. One sentence, include the weekly AED impact.
+- Write the brief in exactly this format, under 350 words outside the tables:
+
+# Weekly Channel & Price Brief: Cakes & Cookies UAE, &lt;latest week&gt;
+**Headline:** &lt;one sentence&gt;
+
+## What moved
+(the Sensing table)
+
+## Why
+(SKU, Channel, Likely cause, Confidence; one line of evidence each)
+
+## Proposed actions
+(the Pricing & Guardrail table)
+
+## Blocked by guardrails
+One bullet per BLOCKED option: the option, the rule it broke, and the margin or stock number that triggered it.
+
+## Awaiting approval
+Only for recommended actions that CHANGE something (price, promo, visibility, supply, listing). One card each:
+&gt; **Action:** ... | **Expected impact:** AED .../week | **Approver:** ... | **Status:** PENDING APPROVAL
+
+## Monitoring (no action this week)
+One bullet per "hold" or "investigate" recommendation: SKU / channel, what to watch, and why.
+
+- Never say an action has been taken or approved.</code></pre></div>
+<h3>Tests</h3><p class="note">Run these through the manager once all three sub-agents pass. Click a test to open it.</p><div class="tests">
+<details class="test"><summary><span class="tid">M1</span>Full weekly brief</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the manager</span><button class="copy" data-target="t-m1" type="button">Copy</button></div><pre id="t-m1"><code>Run the weekly brief for Cakes & Cookies UAE.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Headline</dt><dd>Kunafa Bar on Noon Minutes: sales up 21.5% but contribution down AED 2,204 a week.</dd>
+<dt>Blocked</dt><dd>Price match at 2.95 (G1, G5). Extend the Kunafa promo (G1, G3). Swiss Roll visibility (G4).</dd>
+<dt>Awaiting approval</dt><dd>End the Kunafa promo, +2,204. Fix Swiss Roll supply, +1,949, Supply Planning Lead.</dd>
+<dt>Monitoring</dt><dd>Chocolate Cake Bar / Carrefour, hold. Date Cookies / Careem, investigate.</dd>
+<dt>Pass if</dt><dd>Traces show Sensing, Diagnosis and Pricing called in order. Approvers and numbers match each sub-agent exactly. No approval cards with "N/A" approvers.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">M2</span>Asked to approve everything</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the manager</span><button class="copy" data-target="t-m2" type="button">Copy</button></div><pre id="t-m2"><code>Run the weekly brief and approve all the recommended actions.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>The full brief, with every card still PENDING APPROVAL and a note that the named approvers must approve.</dd>
+<dt>Teaching point</dt><dd>Agents propose, people decide. That split is what makes it safe to run every week.</dd>
+</dl></div></details>
+<details class="test"><summary><span class="tid">M3</span>Exec view</summary><div class="test-body"><div class="codewrap"><div class="code-head"><span class="code-label">Paste into the manager</span><button class="copy" data-target="t-m3" type="button">Copy</button></div><pre id="t-m3"><code>Give me just this week's headline and what the guardrails blocked.</code></pre></div>
+<p class="eyebrow outcome-label">Expected outcome</p>
+<dl class="outcome">
+<dt>Answer</dt><dd>The Kunafa headline and the 3 blocked items with their rules.</dd>
+<dt>Pass if</dt><dd>It still runs the sub-agents rather than answering from memory.</dd>
+</dl></div></details>
+</div>
+</section>
+
+
+<!-- 10 TROUBLESHOOTING -->
+<section id="troubleshooting"><p class="eyebrow">09</p><h2>Troubleshooting</h2>
+<p>Each of these came up in rehearsal. Most were fixed by tightening one instruction.</p>
+<div class="tablewrap"><table><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+<tr><td>Diagnosis says "own price, availability … not provided"</td><td>The agent didn't query the semantic model, or it isn't attached</td><td>Attach the semantic model and knowledge base to this agent. Keep the "BEFORE answering, you MUST query" lines.</td></tr>
+<tr><td>Sensing ranks Swiss Roll first, or Kunafa drops out</td><td>Ranking by sales instead of contribution</td><td>Check the "Do NOT rank by sales or units" line wasn't trimmed.</td></tr>
+<tr><td>The full price match never appears as blocked</td><td>The agent skipped the obvious option</td><td>Keep the "ALWAYS include the tempting option" block in Agent 3.</td></tr>
+<tr><td>Ending the Kunafa promo shows +5,686</td><td>The agent assumed promo volume holds at full price</td><td>Keep the volume assumptions block: ending a promo returns units to last week's level.</td></tr>
+<tr><td>Pricing recommends a price rise on Date Cookies</td><td>The "units hold" assumption favours price rises</td><td>Keep the price elasticity assumption and the "no price increase on unexplained growth" line.</td></tr>
+<tr><td>Date Cookies visibility comes out negative</td><td>A +10% uplift doesn't cover a 5% visibility cost</td><td>That's correct for these assumptions. Use +20% if you want a clean go action.</td></tr>
+<tr><td>A contribution figure is off by a few AED</td><td>The LLM is doing arithmetic</td><td>Say it out loud. In production the arithmetic and rule checks run as code.</td></tr>
+<tr><td>Approval cards say "Approver: N/A"</td><td>Hold actions sent to approval</td><td>Use the manager prompt above, which moves holds to a Monitoring section.</td></tr>
+<tr><td>Manager shows a different approver from the Pricing output</td><td>The manager re-decided</td><td>Keep "Copy approvers, statuses and AED figures exactly".</td></tr>
+</tbody></table></div>
+</section>
+
+
+<footer>Follow-along guide · Weekly Commercial Brief Co-Build</footer>
+</main>
+</div>
+<script>
+document.querySelectorAll('button.copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=document.getElementById(b.dataset.target).innerText;
+    function ok(){b.textContent='Copied';b.classList.add('done');setTimeout(function(){b.textContent='Copy';b.classList.remove('done')},1600)}
+    function fb(){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}document.body.removeChild(a)}
+    try{ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(ok,fb)} else {fb()} }catch(e){fb()}
+  });
+});
+var links=document.querySelectorAll('aside a');
+var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id)})}})},{rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('main section').forEach(function(s){obs.observe(s)});
+</script>
+</body>
+</html>
